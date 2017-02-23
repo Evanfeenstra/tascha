@@ -4,7 +4,7 @@ import CSSTransitionGroup from 'react-addons-css-transition-group'
 const nodes = [
 
   {
-    title: 'Overview',
+    title: 'My Online life',
     children:[
       'Hardware',
       'Connections',
