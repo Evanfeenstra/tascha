@@ -1,4 +1,4 @@
-npm start to start
+npm start
 
 
 ### To get newest work

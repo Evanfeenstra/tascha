@@ -1,74 +1,16 @@
 import React, { Component } from 'react';
 import CSSTransitionGroup from 'react-addons-css-transition-group'
-
-const nodes = [
-
-  {
-    title: 'My Online life',
-    children:[
-      'Hardware',
-      'Connections',
-      'The Internet',
-      'Navigation',
-      'Data Storage',
-      'PROJECT: Take a Picture'
-    ]
-  },
-
-  {
-    title: 'Online Identity',
-    children:[
-      'Personal Data',
-      'Making Accounts',
-      'Email',
-      'Netiquette',
-      'Online presence',
-      'PROJECT: Send an email'
-    ]
-  },
-
-  {
-    title: 'Communication',
-    children:[
-      'SMS',
-      'The App Store',
-      'Messaging Apps',
-      'Social Media',
-      'PROJECT: Start a group chat'
-    ]
-  },
-
-  {
-    title: 'Information',
-    children:[
-      'Evaluating Information',
-      'Google Search',
-      'Youtube',
-      'PROJECT: Find a article',
-    ]
-  },
-
-  {
-    title:'Productivity',
-    children:[
-      'Calendar / Reminders',
-      'Google Docs',
-      'Other Services',
-      'Keeping things updated',
-      'PROJECT: Collaborative Doc',
-    ]
-  }
-]
+import pages from './pages'
 
 const SidebarNodeChild = (props) => {
-  const { child } = props
+  const { child, clickChild } = props
   return (
-    <div className="sidebar-child">{child}</div>
+    <div className="sidebar-child" onClick={()=>{clickChild(child)}}>{child}</div>
   )
 }
 
 const SidebarNode = (props) => {
-  const { node, onClick, selected } = props 
+  const { node, onClick, selected, clickChild } = props 
   return(
     <div style={{background: '#007744'}}>
       <div className="sidebar-node" onClick={() => onClick(node.title)} style={selected===node.title ? {background: '#4455AA'} : {}}>
@@ -86,7 +28,7 @@ const SidebarNode = (props) => {
           <div className="collapser">
             <div style={{fontSize:'12px', padding:9}}>
               {node.children.map((child, i)=>
-                  <SidebarNodeChild key={i} child={child} />
+                  <SidebarNodeChild key={i} child={child} clickChild={clickChild} />
               )}
             </div>
           </div>
@@ -102,7 +44,7 @@ class Sidebar extends Component {
   constructor() {
     super()
     this.state={
-      selected:'',
+      selected:'The Basics',
     }
   }
 
@@ -113,11 +55,19 @@ class Sidebar extends Component {
 
   render() {
     return (
-      <div className="sidebar">
-        <div className="sidebar-top-shadow"></div>
-        {nodes.map((node, i)=>
-            <SidebarNode key={i} node={node} onClick={this.onClick} selected={this.state.selected} />
-        )}
+      <div style={{height:'calc(100% - 50px)'}}>
+        <CSSTransitionGroup transitionName="underlay" transitionEnterTimeout={250} transitionLeaveTimeout={250}>
+          { this.props.smallScreen && !this.props.hidden ?
+            <div className="sidebar-underlay" onClick={this.props.closeSidebar}></div>
+          : null }
+        </CSSTransitionGroup>
+        <div className={this.props.hidden ? "sidebar hidden" : "sidebar"} style={{zIndex:100}}>
+          <div className="sidebar-top-shadow"></div>
+          {pages.map((node, i) =>
+              <SidebarNode key={i} node={node} onClick={this.onClick} selected={this.state.selected} 
+                clickChild={this.props.setChild} />
+          )}
+        </div>
       </div>
     );
   }
